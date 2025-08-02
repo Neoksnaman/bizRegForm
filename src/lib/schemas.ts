@@ -80,6 +80,12 @@ export const bizRegFormSchema = z.object({
 }).refine(data => data.sharesDetails.paidUpCapital >= data.sharesDetails.subscribedCapital * 0.25, {
     message: "Paid-up Capital must be at least 25% of Subscribed Capital.",
     path: ["sharesDetails", "paidUpCapital"],
+}).refine(data => data.sharesDetails.subscribedCapital <= data.sharesDetails.authorizedCapital, {
+    message: "Subscribed Capital Stock cannot exceed Authorized Capital Stock.",
+    path: ["sharesDetails", "subscribedCapital"],
+}).refine(data => data.sharesDetails.paidUpCapital <= data.sharesDetails.subscribedCapital, {
+    message: "Paid-up Capital Stock cannot exceed Subscribed Capital Stock.",
+    path: ["sharesDetails", "paidUpCapital"],
 }).refine(data => {
     const totalSharesSubscribed = data.incorporators.reduce((total, inc) => total + (inc.sharesSubscribed || 0), 0);
     return totalSharesSubscribed === data.sharesDetails.subscribedCapital;
